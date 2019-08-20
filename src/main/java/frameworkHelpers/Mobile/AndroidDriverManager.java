@@ -22,6 +22,7 @@ public class AndroidDriverManager {
 		private AndroidDriver<AndroidElement> driver;
 		private String port;
 		private Logger logger = Logger.getLogger("ReadProperties.class");
+		
 		 public AndroidDriver<AndroidElement> getDriver() {
 			 if(driver == null) driver = createDriver();
 			 	return driver;
@@ -37,6 +38,7 @@ public class AndroidDriverManager {
 			 port=props.getProperty("port");
 			 String apkFilePath=props.getProperty("apkFilePath");
 			 int waitTime=Integer.parseInt(props.getProperty("waitTime"));
+			 String browserName=props.getProperty("browserName");
 			
 			 File appDir = new File(apkFilePath);
 		     File app = new File(appDir, apkFile);
@@ -44,10 +46,14 @@ public class AndroidDriverManager {
 		     capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, deviceName);
 		     capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, platformName);
 		     capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, platformVersion);
-		     //capabilities.setCapability("browserName", "Chrome");
-		     capabilities.setCapability(MobileCapabilityType.APP, app.getAbsolutePath());
+		     if (browserName.trim().length()==0){
+		    	 capabilities.setCapability(MobileCapabilityType.APP, app.getAbsolutePath());
+		     }else{
+		    	 capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, browserName);
+		     }
 		     URL=URL.replace("xxxx", port);
 		     try {
+		    	 logger.info("creating driver");
 				driver = new AndroidDriver<AndroidElement>(new URL(URL), capabilities);
 			} catch (MalformedURLException e) {
 				logger.info(e.getMessage());
